@@ -160,6 +160,146 @@ int main (){
 }
 ```
 
+# Inserting node at the beginning
+
+Kita ingin menyisipkan node 3 pada urutan pertama (sebagai head) ke dalam list yang sudah ada sebelumnya yaitu
+
+```c
+node 1 =  45(1000);
+node 2 =  98(2000);
+node 3 =  3(3000);
+```
+
+> Berurutan : data, alamat memory
+
+Bagaimana menjadikan node 3 pada urutan pertama?
+
+1. Pertama kita harus meng-update nilai dari link pada node 3 yang sebelumnya bernilai NULL menjadi 1000 (alamat node pertama).
+
+```c
+ptr->link = head;
+```
+
+Node 3 menjadi urutan 1 dan node 1 menjadi urutan 2
+
+2. Karena node 1 berubah urutan menjadi urutan kedua maka kita harus ubah pointer yang sebelumnya pointing ke node 1 menjadi pointing ke node 3, karena node 3 sekarang menjadi head
+
+```c
+head = ptr;
+```
+
+Catatan penting :
+Kita **tidak** bisa melakukan _assignment_ `head = ptr` sebelum `ptr->link=head` karena jika kita melakukan _assignment_ terhadap `head=ptr` maka artinya kita tidak bisa melakukan _assignment_ `ptr->link=head` karena node 3 sudah diambil alih oleh `head` jadi pointer `ptr` tidak punya wewenang untuk mengubah nilai dari node 3, perintah `ptr->link=head` jelas tidak berlaku. Jadi urutan sangat penting disini.
+
+```c
+ptr->link = head;
+head = ptr;
+```
+
+Kode Program :
+
+```c
+int main(){
+    struct node *head = malloc(sizeof(struct node));
+    head->data = 45;
+    head->link = NULL;
+
+    struct node *ptr = malloc(sizeof(struct node));
+    ptr->data = 98;
+    ptr->link = NULL;
+
+    head->link = ptr;
+
+    int data = 3;
+
+    head = add_beg(head, data);
+    ptr = head;
+    while(ptr != NULL){
+        printf("%d", ptr->data);
+        ptr = ptr->link;
+    }
+}
+```
+
+Keterangan :
+
+1. Pertama kita buat node menggunakan `malloc()` dan mengisikan data beserta linknya
+
+```c
+struct node *head = malloc(sizeof(struct node));
+head->data = 45;
+head->link = NULL;
+```
+
+2. Selanjutnya kita buat node kedua
+
+```c
+struct node *ptr = malloc(sizeof(struct node));
+ptr->data = 98;
+ptr->link = NULL;
+```
+
+3. Kemudian kita isikan `head->link` dari yang tadinya `NULL` menjadi link yang menyimpan alamat memory node kedua
+
+```c
+head->link = ptr;
+```
+
+Sehingga kedua node diatas tersambung
+
+4. Selanjutnya kita buat data baru yang akan menjadi node 3
+
+```c
+int data = 3;
+```
+
+5. Pada function `add_beg()` berfungsi untuk menyisipkan suatu node menjadi urutan pertama
+
+```c
+struct node* add_beg(struct node* head, int d){
+    struct node *ptr = malloc(sizeof(struct node));
+    ptr->data = d;
+    ptr->link = NULL;
+
+    ptr->link = head;
+    head = ptr;
+    return head;
+}
+```
+
+function `add_beg()` menerima argumen `head`, dan `int d` yang kemudian di dalamnya kita membuat node dengan dengan pointer `*ptr` dan di dalam struct node tersebut kita berikan nilai
+
+```c
+ptr->data = d;
+ptr->link = NULL;
+
+```
+
+link pada node `ptr` tersebut lalu kita isi dengan alamat memory dari `head` yang merupakan node pertama, jadi node 1 berada diurutan kedua dan node 3 menjadi yang pertama.
+
+```c
+ptr->link = head;
+head = ptr;
+```
+
+pointer `head` menyimpan alamat memory dari node 3, jadi node 3 resmi menjadi node 1.
+
+6. Karena kita akan menghitung berapa list yang terdapat dalam program kita maka disinilah fungsi dari `ptr` yaitu untuk menelusuri keseluruhan dari list yang telah kita buat dan menampilkan hasilnya ada berapa list disana. Untuk melakukan tugas itu maka kita gunakan `while`
+
+```c
+ptr = head;
+while(ptr != NULL){
+    printf("%d", ptr->data);
+    ptr = ptr->link;
+}
+```
+
+Selama `ptr` tidak menemui `NULL` (tidak ada node list) maka perulangan berhenti 7. Ouput :
+
+```c
+3 45 98
+```
+
 # Contoh lain linked list
 
 ```c
