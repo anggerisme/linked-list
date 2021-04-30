@@ -300,6 +300,130 @@ Selama `ptr` tidak menemui `NULL` (tidak ada node list) maka perulangan berhenti
 3 45 98
 ```
 
+# Inserting node at the end
+
+Kita sudah memiliki 3 list yang telah kita buat diatas, bagaimana jika kita ingin menambahkan node 4 di urutan terakhir list tersebut?
+
+1. Pertama dengan membuat node ke 4 dengan pointer yang akan menjadi penanda kalau node 4 urutan terakhir.
+2. Jika sebelumnya kita mempunyai pointer `ptr` untuk menghitung total list maka di akhir nanti kita isikan nilai node 3 pada _field_ link agar menyimpan alamat memory dari node 4 menggunakan `ptr`
+
+```c
+ptr->link = temp;
+```
+
+> Setelah `ptr` sampai pada node 3 maka kita akses nilai field linknya lalu kita isikan dengan alamat node 4 yang disimpan dalam pointer `temp`.
+
+Kode Program :
+
+```c
+struct node {
+    int data;
+    struct node *link;
+};
+
+void add_at_end(struct node *head, int data){
+    struct node *ptr, *temp;
+    ptr = head;
+    temp = (struct node*)malloc(sizeof(struct node));
+
+    temp->data = data;
+    temp->link = NULL;
+
+    while(ptr->link != NULL){
+        ptr = ptr->link;
+    }
+    ptr->link = temp;
+}
+
+struct node *add_beg(struct node *head, int d){
+    struct node *ptr = malloc(sizeof(struct node));
+    ptr->data = d;
+    ptr->link = NULL;
+
+    ptr->link = head;
+    head = ptr;
+    return head;
+}
+
+int main(){
+    struct node *head = malloc(sizeof(struct node));
+    head->data = 45;
+    head->link = NULL;
+
+    struct node *ptr = malloc(sizeof(struct node));
+    ptr->data = 98;
+    ptr->link = NULL;
+
+    head->link = ptr;
+    int data = 3;
+
+    head = add_beg(head, data);
+    ptr = head;
+    add_at_end(head, 67);
+    while(ptr != NULL){
+        printf("%d - ", ptr->data);
+        ptr = ptr->link;
+    }
+
+}
+```
+
+Keterangan :
+
+1. Pertama kita buat node yang akan kita posisikan pada urutan pertama. Untuk itu kita perlu membuat function `add_beg` dengan parameter `head`, dan `int d`.
+
+```c
+struct node *add_beg(struct node *head, int d)
+```
+
+> Mengapa Function _add_beg () kita beri arterisk (`_`) karena function `add_beg()`akan mengembalikan nilai yang akan kita simpan nanti dalam pointer head di function`main()`.
+
+Di dalam `add_beg()` terdapat perintah untuk membuat node dengan pointer `ptr`. Dan _data field_ yang ada di dalamnya kita isi masing masing dengan nilai yang diberikan oleh parameter `*head` dan `d` yang di dapat dari argumen dari function `main()`.
+
+```c
+    struct node *ptr = malloc(sizeof(struct node));
+    ptr->data = d;
+    ptr->link = NULL;
+```
+
+Karena kita ingin menjadikan node ini berada pada urutan pertama maka kita perlu meng-update _data field_ `link` pada node `ptr` yang sebelumnya bernilai `NULL` dengan mengisikan alamat memory pada node 1 (`head`) ke dalam link node `ptr` ini yaitu 1000. Sehingga node 1 `head` akan berada di urutan kedua dan node yang baru ini (`ptr`) akan berada pada urutan pertama.
+
+```c
+    ptr->link = head;
+    head = ptr;
+```
+
+Dan kemudian kita arahkan pointer `head` ke node `ptr` agar jelas posisi bahwa node `ptr` berada di urutan pertama.
+
+karena `ptr` beralamat memory 3000 dan `link` pada node `head` = `ptr` maka head juga beralamat 3000. Dan kita kembalikan (`return`) ke dalam function `main()`.
+
+2. Kemudian kita buat function `add_at_end` untuk menambahkan node baru diurutan terakhir. function `add_at_end` memiliki parameter `*head` dan `int data` yang masing-masing menerima argumen yang dikirimkan oleh function `main()`.
+
+Cara kerja dari function `add_at_end` yakni mengisi nilai node yang paling terakhir dengan data/argumen yang kita kirimkan melalui `main()` setelah proses pengulangan while menemui kondisi `ptr != NULL` tidak lagi terpenuhi. Jadi ketika `ptr` menemukan node yang link-nya memiliki nilai NULL untuk kemudian diganti dengan data yang sudah disediakan. Node yang terakhir ini memiliki pointer `temp`
+
+```c
+while(ptr != NULL){
+        printf("%d - ", ptr->data);
+        ptr = ptr->link;
+    }
+```
+
+> Artinyta `ptr` yang sebelumnya berpindah (looping) dari satu node ke node berikutnya. Proses assignment ini dilakukan setelah kondisi `while` terpenuhi yaitu apabila suatu node memiliki link `NULL` maka isi link tersebut dengan alamat memory node yang baru, Sehingga otomatis node yang baru tersebut berada pada urutan terakhir.
+
+Di dalam function `add_at_end` kita membuat pointer `*ptr` dan `*temp`
+
+```c
+struct node *ptr, *temp;
+```
+
+Kemudian pointer `ptr` kita isi dengan `head` yang kita peroleh dari argumen yang dikirimkan oleh function main()
+
+```c
+temp = (struct node*)malloc(sizeof(struct node));
+```
+
+Nilai dari head ini di dapat setelah pemrosesan function add*beg yang kemudian head menjadi beralamat 3000 dan \_pointing* ke node pertama dengan value 3.
+
 # Contoh lain linked list
 
 ```c
